@@ -3,6 +3,7 @@ import Navbar from './components/Navbar'
 import Dashboard from './pages/Dashboard'
 import Applications from './pages/Applications'
 import AddJob from './pages/AddJob'
+import EditJob from './pages/EditJob'
 import JobDetail from './pages/JobDetail'
 import Reminders from './pages/Reminders'
 
@@ -15,6 +16,7 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/applications" element={<Applications />} />
           <Route path="/applications/add" element={<AddJob />} />
+          <Route path="/applications/edit/:id" element={<EditJob />} />
           <Route path="/applications/:id" element={<JobDetail />} />
           <Route path="/reminders" element={<Reminders />} />
         </Routes>
