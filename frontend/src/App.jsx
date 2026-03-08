@@ -6,20 +6,24 @@ import AddJob from './pages/AddJob'
 import EditJob from './pages/EditJob'
 import JobDetail from './pages/JobDetail'
 import Reminders from './pages/Reminders'
+import NotFound from './pages/NotFound'
 
 function App() {
   return (
     <div className="flex">
       <Navbar />
       <main className="ml-64 flex-1 min-h-screen bg-gray-50 p-8">
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/applications" element={<Applications />} />
-          <Route path="/applications/add" element={<AddJob />} />
-          <Route path="/applications/edit/:id" element={<EditJob />} />
-          <Route path="/applications/:id" element={<JobDetail />} />
-          <Route path="/reminders" element={<Reminders />} />
-        </Routes>
+        <div className="animate-fadeIn">
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/applications" element={<Applications />} />
+            <Route path="/applications/add" element={<AddJob />} />
+            <Route path="/applications/edit/:id" element={<EditJob />} />
+            <Route path="/applications/:id" element={<JobDetail />} />
+            <Route path="/reminders" element={<Reminders />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </div>
       </main>
     </div>
   )
