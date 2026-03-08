@@ -10,7 +10,7 @@ function App() {
   return (
     <div className="flex">
       <Navbar />
-      <main className="ml-64 flex-1 min-h-screen bg-gray-50">
+      <main className="ml-64 flex-1 min-h-screen bg-gray-50 p-8">
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/applications" element={<Applications />} />

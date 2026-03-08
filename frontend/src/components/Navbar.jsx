@@ -11,14 +11,14 @@ function Navbar() {
       </div>
 
       {/* Navigation Links */}
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 py-4">
         <NavLink
           to="/"
           className={({ isActive }) =>
-            `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+            `flex items-center gap-3 px-4 py-3 rounded-lg mx-2 my-1 transition-all duration-200 ${
               isActive
                 ? 'bg-blue-600 text-white'
-                : 'text-gray-300 hover:bg-gray-700'
+                : 'text-gray-400 hover:bg-gray-700 hover:text-white'
             }`
           }
         >
@@ -29,10 +29,10 @@ function Navbar() {
         <NavLink
           to="/applications"
           className={({ isActive }) =>
-            `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+            `flex items-center gap-3 px-4 py-3 rounded-lg mx-2 my-1 transition-all duration-200 ${
               isActive
                 ? 'bg-blue-600 text-white'
-                : 'text-gray-300 hover:bg-gray-700'
+                : 'text-gray-400 hover:bg-gray-700 hover:text-white'
             }`
           }
         >
@@ -43,10 +43,10 @@ function Navbar() {
         <NavLink
           to="/applications/add"
           className={({ isActive }) =>
-            `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+            `flex items-center gap-3 px-4 py-3 rounded-lg mx-2 my-1 transition-all duration-200 ${
               isActive
                 ? 'bg-blue-600 text-white'
-                : 'text-gray-300 hover:bg-gray-700'
+                : 'text-gray-400 hover:bg-gray-700 hover:text-white'
             }`
           }
         >
@@ -57,10 +57,10 @@ function Navbar() {
         <NavLink
           to="/reminders"
           className={({ isActive }) =>
-            `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+            `flex items-center gap-3 px-4 py-3 rounded-lg mx-2 my-1 transition-all duration-200 ${
               isActive
                 ? 'bg-blue-600 text-white'
-                : 'text-gray-300 hover:bg-gray-700'
+                : 'text-gray-400 hover:bg-gray-700 hover:text-white'
             }`
           }
         >
@@ -68,6 +68,11 @@ function Navbar() {
           <span>Reminders</span>
         </NavLink>
       </nav>
+
+      {/* Version */}
+      <div className="p-4 text-center text-gray-500 text-xs border-t border-gray-700">
+        v1.0.0
+      </div>
     </div>
   )
 }
