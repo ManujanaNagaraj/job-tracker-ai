@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
 from routers.applications import router as applications_router
+from routers.parser import router as parser_router
 
 app = FastAPI(title="Job Tracker AI API")
 
@@ -21,6 +22,7 @@ def startup():
 
 # Include routers
 app.include_router(applications_router)
+app.include_router(parser_router)
 
 @app.get("/")
 def root():

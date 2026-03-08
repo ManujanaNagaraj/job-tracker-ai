@@ -56,3 +56,31 @@ class StatsResponse(BaseModel):
     offer: int
     rejected: int
     ghosted: int
+
+# URL Parser Schemas
+class ParseURLRequest(BaseModel):
+    url: str
+
+class ParseURLResponse(BaseModel):
+    job_title: Optional[str] = None
+    company: Optional[str] = None
+    job_description: Optional[str] = None
+    location: Optional[str] = None
+    salary_range: Optional[str] = None
+    job_url: Optional[str] = None
+    error: Optional[str] = None
+
+# AI Schemas
+class AITipsResponse(BaseModel):
+    keywords: Optional[list[str]] = None
+    resume_tips: Optional[list[str]] = None
+    cover_letter_opener: Optional[str] = None
+    interview_questions: Optional[list[str]] = None
+    skills_to_highlight: Optional[list[str]] = None
+    error: Optional[str] = None
+
+class CoverLetterRequest(BaseModel):
+    user_background: str
+
+class CoverLetterResponse(BaseModel):
+    cover_letter: str
