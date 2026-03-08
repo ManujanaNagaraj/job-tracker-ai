@@ -3,8 +3,10 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useCreateApplication } from '../hooks/useApplications'
+import { useUrlParser } from '../hooks/useUrlParser'
 import toast from 'react-hot-toast'
-import { Briefcase, MapPin, DollarSign, Link as LinkIcon, FileText, Calendar, ArrowLeft, Building2 } from 'lucide-react'
+import { Briefcase, MapPin, DollarSign, Link as LinkIcon, FileText, Calendar, ArrowLeft, Building2, Wand2, Loader2, CheckCircle } from 'lucide-react'
+import { useState } from 'react'
 
 const schema = z.object({
   company: z.string().min(1, 'Company name is required'),
@@ -22,14 +24,70 @@ const schema = z.object({
 function AddJob() {
   const navigate = useNavigate()
   const createMutation = useCreateApplication()
+  const { mutate: parseUrl, isPending: isParsing } = useUrlParser()
+  const [urlInput, setUrlInput] = useState('')
+  const [autoFilledFields, setAutoFilledFields] = useState(new Set())
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
+  const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
       status: 'Applied',
       applied_date: new Date().toISOString().split('T')[0]
     }
   })
+
+  const handleAutoFill = () => {
+    if (!urlInput.trim()) {
+      toast.error('Please enter a URL first')
+      return
+    }
+
+    parseUrl(urlInput, {
+      onSuccess: (data) => {
+        const filled = new Set()
+        
+        if (data.company) {
+          setValue('company', data.company)
+          filled.add('company')
+        }
+        if (data.job_title) {
+          setValue('job_title', data.job_title)
+          filled.add('job_title')
+        }
+        if (data.location) {
+          setValue('location', data.location)
+          filled.add('location')
+        }
+        if (data.salary_range) {
+          setValue('salary_range', data.salary_range)
+          filled.add('salary_range')
+        }
+        if (data.job_url) {
+          setValue('job_url', data.job_url)
+          filled.add('job_url')
+        }
+        if (data.job_description) {
+          setValue('job_description', data.job_description)
+          filled.add('job_description')
+        }
+
+        setAutoFilledFields(filled)
+
+        if (filled.size > 0) {
+          toast.success(`Form auto-filled! ${filled.size} fields populated`)
+          // Clear auto-filled indicators after 3 seconds
+          setTimeout(() => setAutoFilledFields(new Set()), 3000)
+        } else if (data.error) {
+          toast.error(data.error)
+        } else {
+          toast.error('Could not extract job details from URL')
+        }
+      },
+      onError: () => {
+        toast.error('Failed to parse URL. Please fill manually.')
+      }
+    })
+  }
 
   const onSubmit = (data) => {
     createMutation.mutate(data, {
@@ -61,20 +119,67 @@ function AddJob() {
 
       {/* Form */}
       <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-2xl shadow-sm p-8">
+        {/* URL Auto-Fill Section */}
+        <div className="mb-8 pb-8 border-b border-gray-200">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Quick Fill from Job URL
+          </label>
+          <div className="flex gap-3">
+            <input
+              type="text"
+              value={urlInput}
+              onChange={(e) => setUrlInput(e.target.value)}
+              className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Paste job posting URL to auto-fill form (e.g., https://jobs.lever.co/...)"
+            />
+            <button
+              type="button"
+              onClick={handleAutoFill}
+              disabled={isParsing || !urlInput.trim()}
+              className="flex items-center gap-2 px-6 py-2.5 bg-purple-600 text-white rounded-xl hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {isParsing ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Parsing...</span>
+                </>
+              ) : (
+                <>
+                  <Wand2 className="w-5 h-5" />
+                  <span>Auto Fill</span>
+                </>
+              )}
+            </button>
+          </div>
+          <p className="text-xs text-gray-500 mt-2">
+            Paste a job posting URL and we'll try to extract the details for you
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left Column */}
           <div className="space-y-4">
             {/* Company Name */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                 Company Name *
+                {autoFilledFields.has('company') && (
+                  <span className="flex items-center gap-1 text-green-600 text-xs">
+                    <CheckCircle className="w-4 h-4" />
+                    Auto-filled
+                  </span>
+                )}
               </label>
               <div className="relative">
                 <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   {...register('company')}
                   type="text"
-                  className="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full border rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 ${
+                    autoFilledFields.has('company')
+                      ? 'border-green-500 ring-2 ring-green-200 focus:ring-green-500'
+                      : 'border-gray-200 focus:ring-blue-500'
+                  }`}
                   placeholder="e.g., Google"
                 />
               </div>
@@ -83,15 +188,25 @@ function AddJob() {
 
             {/* Job Title */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                 Job Title *
+                {autoFilledFields.has('job_title') && (
+                  <span className="flex items-center gap-1 text-green-600 text-xs">
+                    <CheckCircle className="w-4 h-4" />
+                    Auto-filled
+                  </span>
+                )}
               </label>
               <div className="relative">
                 <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   {...register('job_title')}
                   type="text"
-                  className="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className={`w-full border rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 ${
+                    autoFilledFields.has('job_title')
+                      ? 'border-green-500 ring-2 ring-green-200 focus:ring-green-500'
+                      : 'border-gray-200 focus:ring-blue-500'
+                  }`}
                   placeholder="e.g., Software Engineer"
                 />
               </div>
