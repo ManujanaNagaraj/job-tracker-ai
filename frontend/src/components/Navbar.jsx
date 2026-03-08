@@ -1,13 +1,16 @@
 import { NavLink } from 'react-router-dom'
-import { Briefcase, LayoutDashboard, ClipboardList, Bell, PlusCircle } from 'lucide-react'
+import { Briefcase, LayoutDashboard, ClipboardList, Bell, PlusCircle, Moon, Sun } from 'lucide-react'
+import useJobStore from '../store/useJobStore'
 
 function Navbar() {
+  const { isDarkMode, toggleDarkMode } = useJobStore()
+
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden md:block fixed left-0 top-0 h-screen w-64 bg-gray-900 text-white flex-col">
+      <div className="hidden md:block fixed left-0 top-0 h-screen w-64 bg-gray-900 dark:bg-gray-950 text-white flex-col">
         {/* App Logo/Name */}
-        <div className="p-6 flex items-center gap-3 border-b border-gray-700">
+        <div className="p-6 flex items-center gap-3 border-b border-gray-700 dark:border-gray-800">
           <Briefcase className="w-8 h-8 text-blue-500" />
           <h1 className="text-xl font-bold">Job Tracker AI</h1>
         </div>
@@ -20,7 +23,7 @@ function Navbar() {
               `flex items-center gap-3 px-4 py-3 rounded-lg mx-2 my-1 transition-all duration-200 ${
                 isActive
                   ? 'bg-blue-600 text-white'
-                  : 'text-gray-400 hover:bg-gray-700 hover:text-white'
+                  : 'text-gray-400 hover:bg-gray-700 dark:hover:bg-gray-800 hover:text-white'
               }`
             }
           >
@@ -34,7 +37,7 @@ function Navbar() {
               `flex items-center gap-3 px-4 py-3 rounded-lg mx-2 my-1 transition-all duration-200 ${
                 isActive
                   ? 'bg-blue-600 text-white'
-                  : 'text-gray-400 hover:bg-gray-700 hover:text-white'
+                  : 'text-gray-400 hover:bg-gray-700 dark:hover:bg-gray-800 hover:text-white'
               }`
             }
           >
@@ -48,7 +51,7 @@ function Navbar() {
               `flex items-center gap-3 px-4 py-3 rounded-lg mx-2 my-1 transition-all duration-200 ${
                 isActive
                   ? 'bg-blue-600 text-white'
-                  : 'text-gray-400 hover:bg-gray-700 hover:text-white'
+                  : 'text-gray-400 hover:bg-gray-700 dark:hover:bg-gray-800 hover:text-white'
               }`
             }
           >
@@ -62,7 +65,7 @@ function Navbar() {
               `flex items-center gap-3 px-4 py-3 rounded-lg mx-2 my-1 transition-all duration-200 ${
                 isActive
                   ? 'bg-blue-600 text-white'
-                  : 'text-gray-400 hover:bg-gray-700 hover:text-white'
+                  : 'text-gray-400 hover:bg-gray-700 dark:hover:bg-gray-800 hover:text-white'
               }`
             }
           >
@@ -71,14 +74,23 @@ function Navbar() {
           </NavLink>
         </nav>
 
-        {/* Version */}
-        <div className="p-4 text-center text-gray-500 text-xs border-t border-gray-700">
-          v1.0.0
+        {/* Dark Mode Toggle & Version */}
+        <div className="border-t border-gray-700 dark:border-gray-800">
+          <button
+            onClick={toggleDarkMode}
+            className="flex items-center gap-3 px-4 py-3 mx-2 my-2 rounded-lg text-gray-400 hover:bg-gray-700 dark:hover:bg-gray-800 hover:text-white transition-all duration-200 w-[calc(100%-1rem)]"
+          >
+            {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+          </button>
+          <div className="p-4 text-center text-gray-500 text-xs">
+            v1.0.0
+          </div>
         </div>
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-gray-900 text-white border-t border-gray-700 z-50">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-gray-900 dark:bg-gray-950 text-white border-t border-gray-700 dark:border-gray-800 z-50">
         <nav className="flex justify-around items-center py-2">
           <NavLink
             to="/"
@@ -127,6 +139,14 @@ function Navbar() {
             <Bell className="w-6 h-6" />
             <span className="text-xs">Alerts</span>
           </NavLink>
+
+          <button
+            onClick={toggleDarkMode}
+            className="flex flex-col items-center gap-1 px-4 py-2 text-gray-400"
+          >
+            {isDarkMode ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
+            <span className="text-xs">Theme</span>
+          </button>
         </nav>
       </div>
     </>

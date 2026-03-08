@@ -12,7 +12,7 @@ function App() {
   return (
     <div className="flex">
       <Navbar />
-      <main className="md:ml-64 flex-1 min-h-screen bg-gray-50 p-4 md:p-8 pb-20 md:pb-8">
+      <main className="md:ml-64 flex-1 min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-8 pb-20 md:pb-8 transition-colors duration-200">
         <div className="animate-fadeIn">
           <Routes>
             <Route path="/" element={<Dashboard />} />

@@ -7,6 +7,19 @@ import App from './App.jsx'
 import ScrollToTop from './components/ScrollToTop.jsx'
 import './index.css'
 
+// Apply dark mode class on initial load before React renders
+const isDarkMode = (() => {
+  const stored = localStorage.getItem('darkMode')
+  if (stored !== null) {
+    return JSON.parse(stored)
+  }
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+})()
+
+if (isDarkMode) {
+  document.documentElement.classList.add('dark')
+}
+
 const queryClient = new QueryClient()
 
 ReactDOM.createRoot(document.getElementById('root')).render(
