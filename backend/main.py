@@ -4,6 +4,7 @@ from database import engine, Base
 from routers.applications import router as applications_router
 from routers.parser import router as parser_router
 from routers.ai import router as ai_router
+from routers.reminders import router as reminders_router
 
 app = FastAPI(title="Job Tracker AI API")
 
@@ -25,6 +26,7 @@ def startup():
 app.include_router(applications_router)
 app.include_router(parser_router)
 app.include_router(ai_router)
+app.include_router(reminders_router)
 
 @app.get("/")
 def root():
