@@ -4,10 +4,11 @@ import { useApplication, useUpdateApplication } from '../hooks/useApplications'
 import StatusBadge from '../components/StatusBadge'
 import LoadingSkeleton from '../components/LoadingSkeleton'
 import ErrorMessage from '../components/ErrorMessage'
+import AITipsPanel from '../components/AITipsPanel'
 import toast from 'react-hot-toast'
 import {
   ArrowLeft, Pencil, Building2, MapPin, DollarSign, Calendar,
-  Link as LinkIcon, FileText, Clock, Sparkles
+  Link as LinkIcon, FileText, Clock
 } from 'lucide-react'
 
 function JobDetail() {
@@ -228,31 +229,12 @@ function JobDetail() {
         {/* Right Column (40%) */}
         <div className="space-y-6">
           {/* AI Tips Panel */}
-          <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl shadow-sm p-6">
-            <div className="flex items-center gap-2 mb-4">
-              <Sparkles className="w-6 h-6 text-purple-600" />
-              <h3 className="text-lg font-semibold text-gray-900">AI Resume Tips</h3>
-            </div>
-            {job.ai_tips ? (
-              <ul className="space-y-2 text-sm text-gray-700">
-                {job.ai_tips.split('\n').map((tip, i) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span className="text-purple-600">•</span>
-                    <span>{tip}</span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <div className="text-center py-6">
-                <p className="text-gray-600 text-sm mb-4">
-                  Click Generate to get personalized resume tips for this role
-                </p>
-                <button className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                  Generate AI Tips
-                </button>
-              </div>
-            )}
-          </div>
+          <AITipsPanel
+            applicationId={parseInt(id)}
+            jobTitle={job.job_title}
+            company={job.company}
+            existingTips={job.ai_tips}
+          />
 
           {/* Resume Version */}
           {job.resume_version && (
