@@ -1,10 +1,10 @@
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { useState } from 'react'
 import { useApplication, useUpdateApplication } from '../hooks/useApplications'
 import StatusBadge from '../components/StatusBadge'
 import LoadingSkeleton from '../components/LoadingSkeleton'
 import ErrorMessage from '../components/ErrorMessage'
 import AITipsPanel from '../components/AITipsPanel'
+import NotesTimeline from '../components/NotesTimeline'
 import toast from 'react-hot-toast'
 import {
   ArrowLeft, Pencil, Building2, MapPin, DollarSign, Calendar,
@@ -16,8 +16,6 @@ function JobDetail() {
   const navigate = useNavigate()
   const { data: job, isLoading, error, refetch } = useApplication(id)
   const updateMutation = useUpdateApplication()
-  const [isEditingNotes, setIsEditingNotes] = useState(false)
-  const [notes, setNotes] = useState('')
 
   const handleStatusChange = (newStatus) => {
     updateMutation.mutate(
@@ -28,21 +26,6 @@ function JobDetail() {
         },
         onError: () => {
           toast.error('Failed to update status')
-        }
-      }
-    )
-  }
-
-  const handleSaveNotes = () => {
-    updateMutation.mutate(
-      { id: parseInt(id), data: { notes } },
-      {
-        onSuccess: () => {
-          toast.success('Notes saved')
-          setIsEditingNotes(false)
-        },
-        onError: () => {
-          toast.error('Failed to save notes')
         }
       }
     )
@@ -163,40 +146,12 @@ function JobDetail() {
             </div>
           )}
 
-          {/* Notes Section */}
+          {/* Notes Timeline */}
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200">Notes</h3>
-              {!isEditingNotes ? (
-                <button
-                  onClick={() => {
-                    setNotes(job.notes || '')
-                    setIsEditingNotes(true)
-                  }}
-                  className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-                >
-                  Edit Notes
-                </button>
-              ) : (
-                <button
-                  onClick={handleSaveNotes}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm"
-                >
-                  Save
-                </button>
-              )}
-            </div>
-            {isEditingNotes ? (
-              <textarea
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                rows="4"
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                placeholder="Add your notes..."
-              />
-            ) : (
-              <p className="text-gray-700 whitespace-pre-wrap">{job.notes || 'No notes yet'}</p>
-            )}
+            <NotesTimeline 
+              applicationId={parseInt(id)} 
+              notes={job.notes_history || []} 
+            />
           </div>
 
           {/* Timeline */}
