@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
 from datetime import datetime
-from models import JobApplication, ApplicationNote
-from schemas import JobApplicationCreate, JobApplicationUpdate, NoteCreate
+from models import JobApplication, ApplicationNote, User
+from schemas import JobApplicationCreate, JobApplicationUpdate, NoteCreate, UserCreate
+from services.auth_service import hash_password, verify_password
 
 def create_application(db: Session, application: JobApplicationCreate):
     db_application = JobApplication(**application.model_dump())
@@ -90,3 +91,33 @@ def delete_note(db: Session, note_id: int):
     db.delete(db_note)
     db.commit()
     return db_note
+
+
+# Auth CRUD operations
+def create_user(db: Session, user: UserCreate):
+    """Create a new user with hashed password."""
+    hashed_password = hash_password(user.password)
+    db_user = User(
+        name=user.name,
+        email=user.email,
+        hashed_password=hashed_password
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
+def get_user_by_email(db: Session, email: str):
+    """Get user by email address."""
+    return db.query(User).filter(User.email == email).first()
+
+
+def authenticate_user(db: Session, email: str, password: str):
+    """Authenticate user with email and password."""
+    user = get_user_by_email(db, email)
+    if not user:
+        return None
+    if not verify_password(password, user.hashed_password):
+        return None
+    return user
