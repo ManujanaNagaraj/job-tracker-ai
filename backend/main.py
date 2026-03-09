@@ -20,11 +20,17 @@ app = FastAPI(
 
 # CORS middleware with dynamic origins
 frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
+frontend_url_2 = os.getenv("FRONTEND_URL_2", "")
+
 allowed_origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     frontend_url,
+    frontend_url_2,
 ]
+
+# Filter out empty strings from origins
+allowed_origins = [origin for origin in allowed_origins if origin]
 
 app.add_middleware(
     CORSMiddleware,
