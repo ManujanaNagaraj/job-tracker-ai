@@ -1,6 +1,18 @@
 # 🚀 Job Tracker AI
 
-A modern, full-stack Job Application Tracker built with React, FastAPI, and SQLite. Track your job applications, manage statuses, and get insights through an intuitive dashboard.
+![Live Demo](https://img.shields.io/badge/Live-Demo-blue?style=for-the-badge&logo=vercel)
+![Made with React](https://img.shields.io/badge/Made%20with-React-61DAFB?style=for-the-badge&logo=react&logoColor=white)
+![Made with FastAPI](https://img.shields.io/badge/Made%20with-FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![License MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+
+A modern, full-stack AI-powered Job Application Tracker built with React, FastAPI, and PostgreSQL. Track your job applications, get AI-powered insights, and never miss a follow-up.
+
+## 🌐 Live Demo
+
+- **Frontend**: [https://job-tracker-ai.vercel.app](https://job-tracker-ai.vercel.app)
+- **Backend API**: [https://your-railway-url.railway.app/docs](https://your-railway-url.railway.app/docs)
+
+> _Replace the URLs above with your actual deployed URLs after deployment_
 
 ## ✨ Features
 
@@ -371,7 +383,63 @@ updated_at: DateTime (Auto)
 - ✅ **Error Handling**: Comprehensive error messages and fallbacks
 - ✅ **Type Safety**: Full TypeScript-like validation with Zod and Pydantic
 
-## 📝 Future Enhancements
+## � Deployment
+
+### Backend (Railway)
+
+1. **Create Railway Account**: Sign up at [railway.app](https://railway.app)
+2. **New Project**: Deploy from GitHub repository
+3. **Configure**:
+   - Root Directory: `backend`
+   - Add PostgreSQL database
+4. **Environment Variables**:
+   ```
+   DATABASE_URL=<auto-filled by Railway>
+   OPENAI_API_KEY=sk-...
+   SMTP_HOST=smtp.gmail.com
+   SMTP_PORT=465
+   SMTP_USER=your_email@gmail.com
+   SMTP_PASSWORD=your_app_password
+   FROM_EMAIL=your_email@gmail.com
+   REMINDER_EMAIL=your_email@gmail.com
+   SECRET_KEY=your_secret_key
+   FRONTEND_URL=https://your-app.vercel.app
+   ```
+5. **Deploy**: Railway will auto-build and deploy
+
+### Frontend (Vercel)
+
+1. **Create Vercel Account**: Sign up at [vercel.com](https://vercel.com)
+2. **Import Project**: Select GitHub repository
+3. **Configuration**:
+   - Framework Preset: Vite
+   - Root Directory: `frontend`
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+4. **Environment Variables**:
+   ```
+   VITE_API_URL=https://your-backend.railway.app
+   ```
+5. **Deploy**: Vercel will build and deploy
+
+### Environment Variables
+
+| Variable | Description | Required | Example |
+|----------|-------------|----------|---------|
+| `VITE_API_URL` | Backend API URL | Yes | `https://api.example.com` |
+| `OPENAI_API_KEY` | OpenAI API key for AI features | No | `sk-...` |
+| `DATABASE_URL` | PostgreSQL connection string | Production | `postgresql://user:pass@host/db` |
+| `SMTP_HOST` | Email server hostname | No | `smtp.gmail.com` |
+| `SMTP_PORT` | Email server port | No | `465` |
+| `SMTP_USER` | Email username | No | `you@gmail.com` |
+| `SMTP_PASSWORD` | Email password/app password | No | `your_password` |
+| `FRONTEND_URL` | Frontend URL for CORS | Production | `https://app.vercel.app` |
+
+## 📸 Screenshots
+
+> Screenshots coming soon
+
+## �📝 Future Enhancements
 - [ ] Export applications to CSV/PDF
 - [ ] Advanced analytics with trend graphs
 - [ ] Calendar integration for interviews
@@ -394,6 +462,6 @@ MIT License
 
 ---
 
-**Version**: 2.0.0  
+**Version**: 1.0.0  
 **Last Updated**: March 2026  
 **Total Features**: 30+ features across 6 pages with AI and automation capabilities
