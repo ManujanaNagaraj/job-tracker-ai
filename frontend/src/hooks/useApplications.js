@@ -53,6 +53,9 @@ export const useCreateApplication = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['applications'] })
       queryClient.invalidateQueries({ queryKey: ['stats'] })
+    },
+    onError: (error) => {
+      console.error('Failed to create application:', error.message)
     }
   })
 }
@@ -70,6 +73,9 @@ export const useUpdateApplication = () => {
       queryClient.invalidateQueries({ queryKey: ['applications'] })
       queryClient.invalidateQueries({ queryKey: ['application', data.id] })
       queryClient.invalidateQueries({ queryKey: ['stats'] })
+    },
+    onError: (error) => {
+      console.error('Failed to update application:', error.message)
     }
   })
 }
@@ -86,6 +92,9 @@ export const useDeleteApplication = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['applications'] })
       queryClient.invalidateQueries({ queryKey: ['stats'] })
+    },
+    onError: (error) => {
+      console.error('Failed to delete application:', error.message)
     }
   })
 }

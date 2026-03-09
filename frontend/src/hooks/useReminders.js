@@ -30,8 +30,11 @@ export const useSendReminder = () => {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['reminders'])
-      queryClient.invalidateQueries(['applications'])
+      queryClient.invalidateQueries({ queryKey: ['reminders'] })
+      queryClient.invalidateQueries({ queryKey: ['applications'] })
+    },
+    onError: (error) => {
+      console.error('Failed to send reminder:', error.message)
     }
   })
 }
@@ -45,9 +48,12 @@ export const useSnoozeReminder = () => {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['reminders'])
-      queryClient.invalidateQueries(['upcoming-followups'])
-      queryClient.invalidateQueries(['applications'])
+      queryClient.invalidateQueries({ queryKey: ['reminders'] })
+      queryClient.invalidateQueries({ queryKey: ['upcoming-followups'] })
+      queryClient.invalidateQueries({ queryKey: ['applications'] })
+    },
+    onError: (error) => {
+      console.error('Failed to snooze reminder:', error.message)
     }
   })
 }
@@ -61,8 +67,11 @@ export const useMarkUpdated = () => {
       return data
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['reminders'])
-      queryClient.invalidateQueries(['applications'])
+      queryClient.invalidateQueries({ queryKey: ['reminders'] })
+      queryClient.invalidateQueries({ queryKey: ['applications'] })
+    },
+    onError: (error) => {
+      console.error('Failed to mark as updated:', error.message)
     }
   })
 }
