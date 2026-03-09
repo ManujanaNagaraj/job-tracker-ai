@@ -97,7 +97,7 @@ function Reminders() {
       <div>
         <div className="flex items-center gap-3 mb-2">
           <Bell className="w-8 h-8 text-blue-600" />
-          <h1 className="text-3xl font-bold text-gray-900">Follow-up Reminders</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Follow-up Reminders</h1>
         </div>
         <p className="text-gray-600">Stay on top of your job applications</p>
       </div>

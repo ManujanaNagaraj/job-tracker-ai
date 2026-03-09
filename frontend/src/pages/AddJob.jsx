@@ -112,13 +112,13 @@ function AddJob() {
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Add New Application</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Add New Application</h1>
           <p className="text-gray-500 mt-1">Track a new job opportunity</p>
         </div>
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-2xl shadow-sm p-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8">
         {/* URL Auto-Fill Section */}
         <div className="mb-8 pb-8 border-b border-gray-200">
           <label className="block text-sm font-medium text-gray-700 mb-2">

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
+import { memo, useCallback } from 'react'
 import { Search, Filter, Plus, Pencil, Trash2, ExternalLink, Building2, MapPin, Calendar } from 'lucide-react'
 import { useApplications, useDeleteApplication } from '../hooks/useApplications'
 import useJobStore from '../store/useJobStore'
@@ -9,7 +10,7 @@ import ErrorMessage from '../components/ErrorMessage'
 import EmptyState from '../components/EmptyState'
 import toast from 'react-hot-toast'
 
-function JobCard({ job, onEdit, onDelete }) {
+const JobCard = memo(function JobCard({ job, onEdit, onDelete }) {
   const navigate = useNavigate()
 
   return (
@@ -81,7 +82,7 @@ function JobCard({ job, onEdit, onDelete }) {
       </div>
     </div>
   )
-}
+})
 
 function Applications() {
   const navigate = useNavigate()
@@ -94,11 +95,11 @@ function Applications() {
   
   const deleteMutation = useDeleteApplication()
 
-  const handleEdit = (id) => {
+  const handleEdit = useCallback((id) => {
     navigate(`/applications/edit/${id}`)
-  }
+  }, [navigate])
 
-  const handleDelete = (job) => {
+  const handleDelete = useCallback((job) => {
     if (window.confirm(`Are you sure you want to delete the application for ${job.company}?`)) {
       deleteMutation.mutate(job.id, {
         onSuccess: () => {
@@ -109,7 +110,7 @@ function Applications() {
         }
       })
     }
-  }
+  }, [deleteMutation])
 
   const hasFilters = searchQuery || selectedStatus
 
@@ -126,7 +127,7 @@ function Applications() {
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Applications</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Applications</h1>
           <p className="text-gray-500 mt-1">{applications?.length || 0} jobs tracked</p>
         </div>
         <Link

@@ -96,18 +96,18 @@ function JobDetail() {
         {/* Left Column (60%) */}
         <div className="lg:col-span-2 space-y-6">
           {/* Header Card */}
-          <div className="bg-white rounded-2xl shadow-sm p-8">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8">
             <div className="flex items-center gap-3 mb-3">
               <Building2 className="w-8 h-8 text-blue-600" />
-              <h1 className="text-3xl font-bold text-gray-900">{job.company}</h1>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{job.company}</h1>
             </div>
-            <h2 className="text-xl text-gray-600 mb-4">{job.job_title}</h2>
+            <h2 className="text-xl text-gray-600 dark:text-gray-300 mb-4">{job.job_title}</h2>
             <StatusBadge status={job.status} />
           </div>
 
           {/* Info Grid */}
-          <div className="bg-white rounded-2xl shadow-sm p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Details</h3>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6">
+            <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">Details</h3>
             <div className="grid grid-cols-2 gap-4">
               {job.location && (
                 <div className="flex items-start gap-3">
@@ -157,16 +157,16 @@ function JobDetail() {
 
           {/* Job Description */}
           {job.job_description && (
-            <div className="bg-white rounded-2xl shadow-sm p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Job Description</h3>
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">Job Description</h3>
               <p className="text-gray-700 whitespace-pre-wrap">{job.job_description}</p>
             </div>
           )}
 
           {/* Notes Section */}
-          <div className="bg-white rounded-2xl shadow-sm p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Notes</h3>
+              <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200">Notes</h3>
               {!isEditingNotes ? (
                 <button
                   onClick={() => {
@@ -200,8 +200,8 @@ function JobDetail() {
           </div>
 
           {/* Timeline */}
-          <div className="bg-white rounded-2xl shadow-sm p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Timeline</h3>
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6">
+            <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">Timeline</h3>
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-sm">
                 <Clock className="w-4 h-4 text-gray-400" />

@@ -81,13 +81,13 @@ function EditJob() {
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Edit Application</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Edit Application</h1>
           <p className="text-gray-500 mt-1">Update job details</p>
         </div>
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-2xl shadow-sm p-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left Column */}
           <div className="space-y-4">

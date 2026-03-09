@@ -9,26 +9,26 @@ import {
 import { Link } from 'react-router-dom'
 
 function Dashboard() {
-  const { data: stats, isLoading: statsLoading } = useStats()
-  const { data: applications, isLoading: appsLoading } = useApplications({ limit: 5 })
+  const { data: stats, isLoading: statsLoading, error: statsError } = useStats()
+  const { data: applications, isLoading: appsLoading, error: appsError } = useApplications({ limit: 5 })
 
   // Prepare chart data
   const barData = stats ? [
-    { name: 'Applied', count: stats.applied },
-    { name: 'Screening', count: stats.screening },
-    { name: 'Interview', count: stats.interview },
-    { name: 'Offer', count: stats.offer },
-    { name: 'Rejected', count: stats.rejected },
-    { name: 'Ghosted', count: stats.ghosted }
+    { name: 'Applied', count: stats.applied || 0 },
+    { name: 'Screening', count: stats.screening || 0 },
+    { name: 'Interview', count: stats.interview || 0 },
+    { name: 'Offer', count: stats.offer || 0 },
+    { name: 'Rejected', count: stats.rejected || 0 },
+    { name: 'Ghosted', count: stats.ghosted || 0 }
   ] : []
 
   const pieData = stats ? [
-    { name: 'Applied', value: stats.applied },
-    { name: 'Screening', value: stats.screening },
-    { name: 'Interview', value: stats.interview },
-    { name: 'Offer', value: stats.offer },
-    { name: 'Rejected', value: stats.rejected },
-    { name: 'Ghosted', value: stats.ghosted }
+    { name: 'Applied', value: stats.applied || 0 },
+    { name: 'Screening', value: stats.screening || 0 },
+    { name: 'Interview', value: stats.interview || 0 },
+    { name: 'Offer', value: stats.offer || 0 },
+    { name: 'Rejected', value: stats.rejected || 0 },
+    { name: 'Ghosted', value: stats.ghosted || 0 }
   ].filter(item => item.value > 0) : []
 
   const COLORS = ['#3b82f6', '#eab308', '#a855f7', '#22c55e', '#ef4444', '#6b7280']
@@ -60,11 +60,28 @@ function Dashboard() {
     )
   }
 
+  if (statsError) {
+    return (
+      <div className="space-y-6">
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Dashboard</h1>
+        <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+          <p className="text-red-600 mb-4">Failed to load dashboard data: {statsError.message}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Dashboard</h1>
         <p className="text-gray-500 mt-1">{today}</p>
       </div>
 
@@ -103,8 +120,8 @@ function Dashboard() {
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         {/* Bar Chart - 60% width */}
-        <div className="lg:col-span-3 bg-white rounded-2xl shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Applications by Status</h2>
+        <div className="lg:col-span-3 bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6">
+          <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">Applications by Status</h2>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={barData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -117,8 +134,8 @@ function Dashboard() {
         </div>
 
         {/* Pie Chart - 40% width */}
-        <div className="lg:col-span-2 bg-white rounded-2xl shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Status Distribution</h2>
+        <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6">
+          <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">Status Distribution</h2>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -143,9 +160,9 @@ function Dashboard() {
       </div>
 
       {/* Recent Applications Table */}
-      <div className="bg-white rounded-2xl shadow-sm p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Recent Activity</h2>
+          <h2 className="text-lg font-semibold text-gray-700 dark:text-gray-200">Recent Activity</h2>
           <Link 
             to="/applications" 
             className="text-blue-600 hover:text-blue-700 text-sm font-medium"
