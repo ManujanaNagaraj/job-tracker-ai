@@ -4,15 +4,21 @@ from models import JobApplication, ApplicationNote, User
 from schemas import JobApplicationCreate, JobApplicationUpdate, NoteCreate, UserCreate
 from services.auth_service import hash_password, verify_password
 
-def create_application(db: Session, application: JobApplicationCreate):
+def create_application(db: Session, application: JobApplicationCreate, owner_id: int = None):
     db_application = JobApplication(**application.model_dump())
+    if owner_id:
+        db_application.owner_id = owner_id
     db.add(db_application)
     db.commit()
     db.refresh(db_application)
     return db_application
 
-def get_all_applications(db: Session, skip: int = 0, limit: int = 100, status: str = None, search: str = None):
+def get_all_applications(db: Session, skip: int = 0, limit: int = 100, status: str = None, search: str = None, owner_id: int = None):
     query = db.query(JobApplication)
+    
+    # Filter by owner if provided
+    if owner_id is not None:
+        query = query.filter(JobApplication.owner_id == owner_id)
     
     if status:
         query = query.filter(JobApplication.status == status)
@@ -52,14 +58,20 @@ def delete_application(db: Session, id: int):
     db.commit()
     return db_application
 
-def get_stats(db: Session):
-    total = db.query(JobApplication).count()
-    applied = db.query(JobApplication).filter(JobApplication.status == "Applied").count()
-    screening = db.query(JobApplication).filter(JobApplication.status == "Screening").count()
-    interview = db.query(JobApplication).filter(JobApplication.status == "Interview").count()
-    offer = db.query(JobApplication).filter(JobApplication.status == "Offer").count()
-    rejected = db.query(JobApplication).filter(JobApplication.status == "Rejected").count()
-    ghosted = db.query(JobApplication).filter(JobApplication.status == "Ghosted").count()
+def get_stats(db: Session, owner_id: int = None):
+    query = db.query(JobApplication)
+    
+    # Filter by owner if provided
+    if owner_id is not None:
+        query = query.filter(JobApplication.owner_id == owner_id)
+    
+    total = query.count()
+    applied = query.filter(JobApplication.status == "Applied").count()
+    screening = query.filter(JobApplication.status == "Screening").count()
+    interview = query.filter(JobApplication.status == "Interview").count()
+    offer = query.filter(JobApplication.status == "Offer").count()
+    rejected = query.filter(JobApplication.status == "Rejected").count()
+    ghosted = query.filter(JobApplication.status == "Ghosted").count()
     
     return {
         "total": total,

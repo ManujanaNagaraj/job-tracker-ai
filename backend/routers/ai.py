@@ -4,12 +4,18 @@ import json
 from ..database import get_db
 from ..schemas import AITipsResponse, CoverLetterRequest, CoverLetterResponse
 from ..services.ai_service import generate_resume_tips, generate_cover_letter
+from ..services.auth_service import get_current_user
+from ..models import User
 from .. import crud
 
 router = APIRouter(prefix="/ai", tags=["ai"])
 
 @router.post("/tips/{application_id}", response_model=AITipsResponse)
-async def get_ai_tips(application_id: int, db: Session = Depends(get_db)):
+async def get_ai_tips(
+    application_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     """
     Generate or retrieve AI-powered resume tips for a job application
     """
@@ -17,6 +23,10 @@ async def get_ai_tips(application_id: int, db: Session = Depends(get_db)):
     job = crud.get_application_by_id(db, application_id)
     if not job:
         raise HTTPException(status_code=404, detail="Application not found")
+    
+    # Check ownership
+    if job.owner_id and job.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to access this application")
     
     # Return cached tips if they exist
     if job.ai_tips:
@@ -48,7 +58,8 @@ async def get_ai_tips(application_id: int, db: Session = Depends(get_db)):
 async def get_cover_letter(
     application_id: int,
     request: CoverLetterRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """
     Generate a cover letter for a job application
@@ -57,6 +68,10 @@ async def get_cover_letter(
     job = crud.get_application_by_id(db, application_id)
     if not job:
         raise HTTPException(status_code=404, detail="Application not found")
+    
+    # Check ownership
+    if job.owner_id and job.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to access this application")
     
     # Generate cover letter
     cover_letter = await generate_cover_letter(
@@ -70,13 +85,21 @@ async def get_cover_letter(
 
 
 @router.delete("/tips/{application_id}")
-def clear_ai_tips(application_id: int, db: Session = Depends(get_db)):
+def clear_ai_tips(
+    application_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     """
     Clear cached AI tips to allow regeneration
     """
     job = crud.get_application_by_id(db, application_id)
     if not job:
         raise HTTPException(status_code=404, detail="Application not found")
+    
+    # Check ownership
+    if job.owner_id and job.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to access this application")
     
     crud.update_application(db, application_id, {"ai_tips": None})
     

@@ -6,6 +6,8 @@ from typing import List
 from ..database import get_db
 from ..schemas import JobApplicationResponse
 from ..services.email_service import send_reminder_email
+from ..services.auth_service import get_current_user
+from ..models import User
 from .. import crud
 
 router = APIRouter(prefix="/reminders", tags=["reminders"])
@@ -20,15 +22,18 @@ class SnoozeRequest(BaseModel):
 
 
 @router.get("/", response_model=List[JobApplicationResponse])
-def get_pending_reminders(db: Session = Depends(get_db)):
+def get_pending_reminders(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     """
     Get applications that need follow-up
     (status=Applied or Screening, applied_date > 7 days ago, reminder_sent=False)
     """
     cutoff_date = datetime.now() - timedelta(days=7)
     
-    # Get all applications
-    all_apps = crud.get_all_applications(db)
+    # Get all applications for current user
+    all_apps = crud.get_all_applications(db, owner_id=current_user.id)
     
     # Filter for pending reminders
     pending = [
@@ -43,15 +48,18 @@ def get_pending_reminders(db: Session = Depends(get_db)):
 
 
 @router.get("/upcoming", response_model=List[JobApplicationResponse])
-def get_upcoming_followups(db: Session = Depends(get_db)):
+def get_upcoming_followups(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     """
     Get applications with follow_up_date in next 7 days
     """
     today = datetime.now().date()
     next_week = today + timedelta(days=7)
     
-    # Get all applications
-    all_apps = crud.get_all_applications(db)
+    # Get all applications for current user
+    all_apps = crud.get_all_applications(db, owner_id=current_user.id)
     
     # Filter for upcoming follow-ups
     upcoming = [
@@ -70,7 +78,8 @@ def get_upcoming_followups(db: Session = Depends(get_db)):
 def send_reminder(
     application_id: int,
     request: SendReminderRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """
     Manually send a reminder email for an application
@@ -79,6 +88,10 @@ def send_reminder(
     job = crud.get_application_by_id(db, application_id)
     if not job:
         raise HTTPException(status_code=404, detail="Application not found")
+    
+    # Check ownership
+    if job.owner_id and job.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to access this application")
     
     # Calculate days since applied
     if job.applied_date:
@@ -113,7 +126,8 @@ def send_reminder(
 def snooze_reminder(
     application_id: int,
     request: SnoozeRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
     """
     Snooze a reminder by updating follow_up_date
@@ -121,6 +135,10 @@ def snooze_reminder(
     job = crud.get_application_by_id(db, application_id)
     if not job:
         raise HTTPException(status_code=404, detail="Application not found")
+    
+    # Check ownership
+    if job.owner_id and job.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to access this application")
     
     # Set follow_up_date to X days from now
     new_date = datetime.now() + timedelta(days=request.days)
@@ -138,13 +156,21 @@ def snooze_reminder(
 
 
 @router.put("/mark-updated/{application_id}")
-def mark_as_updated(application_id: int, db: Session = Depends(get_db)):
+def mark_as_updated(
+    application_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     """
     Mark an application as updated (sets reminder_sent=True)
     """
     job = crud.get_application_by_id(db, application_id)
     if not job:
         raise HTTPException(status_code=404, detail="Application not found")
+    
+    # Check ownership
+    if job.owner_id and job.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized to access this application")
     
     crud.update_application(db, application_id, {"reminder_sent": True})
     
