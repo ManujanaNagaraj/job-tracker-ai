@@ -24,7 +24,7 @@ class JobApplication(Base):
     __tablename__ = "job_applications"
 
     id = Column(Integer, primary_key=True, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id"), nullable=True)  # nullable for backwards compatibility
+    owner_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     company = Column(String, nullable=False)
     job_title = Column(String, nullable=False)
     job_url = Column(String)
