@@ -8,6 +8,7 @@ from routers.applications import router as applications_router
 from routers.parser import router as parser_router
 from routers.ai import router as ai_router
 from routers.reminders import router as reminders_router
+from routers.auth import router as auth_router
 
 # Load environment variables
 load_dotenv()
@@ -57,6 +58,7 @@ def startup():
         Base.metadata.create_all(bind=engine)
 
 # Include routers
+app.include_router(auth_router)
 app.include_router(applications_router)
 app.include_router(parser_router)
 app.include_router(ai_router)
@@ -67,7 +69,8 @@ def root():
     return {
         "message": "Job Tracker AI API is running",
         "version": "1.0.0",
-        "status": "healthy"
+        "status": "healthy",
+        "note": "Most endpoints require JWT authentication. Register at /auth/register or login at /auth/login"
     }
 
 @app.get("/health")
