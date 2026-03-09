@@ -1,9 +1,32 @@
 import { NavLink } from 'react-router-dom'
-import { Briefcase, LayoutDashboard, ClipboardList, Bell, PlusCircle, Moon, Sun } from 'lucide-react'
+import { useState } from 'react'
+import { Briefcase, LayoutDashboard, ClipboardList, Bell, PlusCircle, Moon, Sun, LogOut, User } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
 import useJobStore from '../store/useJobStore'
 
 function Navbar() {
   const { isDarkMode, toggleDarkMode } = useJobStore()
+  const { user, logout } = useAuth()
+  const [showDropdown, setShowDropdown] = useState(false)
+
+  const getInitials = (name) => {
+    return name
+      ? name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+      : '??'
+  }
+
+  const getUserColor = (name) => {
+    const colors = [
+      'bg-blue-600',
+      'bg-purple-600',
+      'bg-green-600',
+      'bg-red-600',
+      'bg-yellow-600',
+      'bg-indigo-600'
+    ]
+    const index = name ? name.charCodeAt(0) % colors.length : 0
+    return colors[index]
+  }
 
   return (
     <>
@@ -74,7 +97,7 @@ function Navbar() {
           </NavLink>
         </nav>
 
-        {/* Dark Mode Toggle & Version */}
+        {/* Dark Mode Toggle & User Profile */}
         <div className="border-t border-gray-700 dark:border-gray-800">
           <button
             onClick={toggleDarkMode}
@@ -83,6 +106,41 @@ function Navbar() {
             {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
           </button>
+          
+          {/* User Profile Section */}
+          {user && (
+            <div className="p-2 relative">
+              <button
+                onClick={() => setShowDropdown(!showDropdown)}
+                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-700 dark:hover:bg-gray-800 transition-all duration-200 w-full"
+              >
+                <div className={`w-10 h-10 rounded-full ${getUserColor(user.name)} flex items-center justify-center text-white font-semibold`}>
+                  {getInitials(user.name)}
+                </div>
+                <div className="flex-1 text-left">
+                  <p className="text-sm font-medium text-white">{user.name}</p>
+                  <p className="text-xs text-gray-400 truncate">{user.email}</p>
+                </div>
+              </button>
+
+              {/* Dropdown Menu */}
+              {showDropdown && (
+                <div className="absolute bottom-full left-2 right-2 mb-2 bg-gray-800 rounded-lg shadow-lg overflow-hidden border border-gray-700">
+                  <button
+                    onClick={() => {
+                      logout()
+                      setShowDropdown(false)
+                    }}
+                    className="flex items-center gap-3 px-4 py-3 w-full text-left text-gray-300 hover:bg-gray-700 transition-colors"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Logout</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+          
           <div className="p-4 text-center text-gray-500 text-xs">
             v1.0.0
           </div>
