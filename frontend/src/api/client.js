@@ -16,7 +16,11 @@ if (import.meta.env.DEV) {
 // Request interceptor
 client.interceptors.request.use(
   (config) => {
-    // You can add auth tokens here in the future
+    // Attach JWT token from localStorage to all requests
+    const token = localStorage.getItem('token')
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
     return config
   },
   (error) => {
@@ -41,8 +45,12 @@ client.interceptors.response.use(
       errorMessage = data?.detail || data?.message || errorMessage
       
       if (status === 401) {
-        // Unauthorized - could redirect to login in the future
+        // Unauthorized - clear token and redirect to login
         console.error('Unauthorized access:', errorMessage)
+        localStorage.removeItem('token')
+        if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
+          window.location.href = '/login'
+        }
       } else if (status === 404) {
         console.error('Resource not found:', errorMessage)
       } else if (status >= 500) {
