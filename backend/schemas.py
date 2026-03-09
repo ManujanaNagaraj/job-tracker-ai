@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 class JobApplicationCreate(BaseModel):
     company: str
@@ -45,6 +45,7 @@ class JobApplicationResponse(BaseModel):
     follow_up_date: Optional[datetime]
     created_at: datetime
     updated_at: Optional[datetime]
+    notes_history: List['NoteResponse'] = []
     
     model_config = ConfigDict(from_attributes=True)
 
