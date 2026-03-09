@@ -1,6 +1,7 @@
 import { useStats, useApplications } from '../hooks/useApplications'
 import { useQuery } from '@tanstack/react-query'
 import client from '../api/client'
+import { useAuth } from '../context/AuthContext'
 import StatsCard from '../components/StatsCard'
 import StatusBadge from '../components/StatusBadge'
 import { Briefcase, TrendingUp, Award, XCircle, Wifi, WifiOff } from 'lucide-react'
@@ -11,8 +12,20 @@ import {
 import { Link } from 'react-router-dom'
 
 function Dashboard() {
+  const { user } = useAuth()
   const { data: stats, isLoading: statsLoading, error: statsError } = useStats()
   const { data: applications, isLoading: appsLoading, error: appsError } = useApplications({ limit: 5 })
+  
+  // Get greeting based on time of day
+  const getGreeting = () => {
+    const hour = new Date().getHours()
+    if (hour >= 5 && hour < 12) return 'Good morning'
+    if (hour >= 12 && hour < 17) return 'Good afternoon'
+    if (hour >= 17 && hour < 21) return 'Good evening'
+    return 'Working late'
+  }
+  
+  const firstName = user?.name?.split(' ')[0] || 'there'
   
   // Health check for connection status
   const { data: healthData, isError: healthError } = useQuery({
@@ -92,11 +105,13 @@ function Dashboard() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
+      {/* Header with Personalized Greeting */}
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Dashboard</h1>
-          <p className="text-gray-500 mt-1">{today}</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+            {getGreeting()}, {firstName}! 👋
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-1">{today}</p>
         </div>
         {/* Connection Status Indicator */}
         <div className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
