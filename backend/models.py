@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean
+from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, ForeignKey
+from sqlalchemy.orm import relationship
 from datetime import datetime, date
 from database import Base
 
@@ -22,5 +23,24 @@ class JobApplication(Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
     
+    # Relationship to notes history
+    notes_history = relationship("ApplicationNote", back_populates="application", cascade="all, delete-orphan")
+    
     def __repr__(self):
         return f"<JobApplication {self.company} - {self.job_title}>"
+
+
+class ApplicationNote(Base):
+    __tablename__ = "application_notes"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    application_id = Column(Integer, ForeignKey("job_applications.id"), nullable=False)
+    content = Column(Text, nullable=False)
+    note_type = Column(String, default="general")  # general, interview, followup, offer, rejection
+    created_at = Column(DateTime, default=datetime.now)
+    
+    # Relationship to job application
+    application = relationship("JobApplication", back_populates="notes_history")
+    
+    def __repr__(self):
+        return f"<ApplicationNote {self.note_type} for App {self.application_id}>"

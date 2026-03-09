@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from datetime import datetime
-from models import JobApplication
-from schemas import JobApplicationCreate, JobApplicationUpdate
+from models import JobApplication, ApplicationNote
+from schemas import JobApplicationCreate, JobApplicationUpdate, NoteCreate
 
 def create_application(db: Session, application: JobApplicationCreate):
     db_application = JobApplication(**application.model_dump())
@@ -69,3 +69,24 @@ def get_stats(db: Session):
         "rejected": rejected,
         "ghosted": ghosted
     }
+
+# Application Notes CRUD operations
+def create_note(db: Session, note: NoteCreate):
+    db_note = ApplicationNote(**note.model_dump())
+    db.add(db_note)
+    db.commit()
+    db.refresh(db_note)
+    return db_note
+
+def get_notes_by_application(db: Session, application_id: int):
+    return db.query(ApplicationNote).filter(
+        ApplicationNote.application_id == application_id
+    ).order_by(ApplicationNote.created_at.desc()).all()
+
+def delete_note(db: Session, note_id: int):
+    db_note = db.query(ApplicationNote).filter(ApplicationNote.id == note_id).first()
+    if not db_note:
+        return None
+    db.delete(db_note)
+    db.commit()
+    return db_note

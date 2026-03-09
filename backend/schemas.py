@@ -79,6 +79,21 @@ class AITipsResponse(BaseModel):
     skills_to_highlight: Optional[list[str]] = None
     error: Optional[str] = None
 
+# Application Notes Schemas
+class NoteCreate(BaseModel):
+    application_id: int
+    content: str
+    note_type: Optional[str] = "general"  # general, interview, followup, offer, rejection
+
+class NoteResponse(BaseModel):
+    id: int
+    application_id: int
+    content: str
+    note_type: str
+    created_at: datetime
+    
+    model_config = ConfigDict(from_attributes=True)
+
 class CoverLetterRequest(BaseModel):
     user_background: str
 

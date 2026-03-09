@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from database import get_db
-from schemas import JobApplicationCreate, JobApplicationUpdate, JobApplicationResponse, StatsResponse
+from schemas import JobApplicationCreate, JobApplicationUpdate, JobApplicationResponse, StatsResponse, NoteCreate, NoteResponse
 import crud
 
 router = APIRouter(prefix="/applications", tags=["applications"])
@@ -44,4 +44,32 @@ def delete_application(id: int, db: Session = Depends(get_db)):
     deleted = crud.delete_application(db, id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Application not found")
+    return None
+
+# Application Notes endpoints
+@router.post("/{id}/notes", response_model=NoteResponse, status_code=status.HTTP_201_CREATED)
+def create_note(id: int, note: NoteCreate, db: Session = Depends(get_db)):
+    # Verify application exists
+    application = crud.get_application_by_id(db, id)
+    if not application:
+        raise HTTPException(status_code=404, detail="Application not found")
+    
+    # Ensure note is for the correct application
+    note.application_id = id
+    return crud.create_note(db, note)
+
+@router.get("/{id}/notes", response_model=List[NoteResponse])
+def get_notes(id: int, db: Session = Depends(get_db)):
+    # Verify application exists
+    application = crud.get_application_by_id(db, id)
+    if not application:
+        raise HTTPException(status_code=404, detail="Application not found")
+    
+    return crud.get_notes_by_application(db, id)
+
+@router.delete("/{id}/notes/{note_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_note(id: int, note_id: int, db: Session = Depends(get_db)):
+    deleted = crud.delete_note(db, note_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Note not found")
     return None
