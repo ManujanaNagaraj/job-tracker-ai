@@ -21,3 +21,6 @@ class JobApplication(Base):
     follow_up_date = Column(DateTime)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+    
+    def __repr__(self):
+        return f"<JobApplication {self.company} - {self.job_title}>"

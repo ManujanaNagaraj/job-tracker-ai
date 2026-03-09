@@ -14,12 +14,17 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./job_tracker.db")
 if DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-# SQLite needs check_same_thread=False, PostgreSQL doesn't
+# SQLite needs check_same_thread=False, PostgreSQL needs pool settings
 connect_args = {}
+engine_kwargs = {"connect_args": connect_args}
+
 if DATABASE_URL.startswith("sqlite"):
     connect_args = {"check_same_thread": False}
+elif DATABASE_URL.startswith("postgresql"):
+    # PostgreSQL connection pool settings
+    engine_kwargs.update({"pool_size": 5, "max_overflow": 10})
 
-engine = create_engine(DATABASE_URL, connect_args=connect_args)
+engine = create_engine(DATABASE_URL, **engine_kwargs)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

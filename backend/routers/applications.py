@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from database import get_db
@@ -7,7 +7,7 @@ import crud
 
 router = APIRouter(prefix="/applications", tags=["applications"])
 
-@router.post("/", response_model=JobApplicationResponse)
+@router.post("/", response_model=JobApplicationResponse, status_code=status.HTTP_201_CREATED)
 def create_application(application: JobApplicationCreate, db: Session = Depends(get_db)):
     return crud.create_application(db, application)
 
@@ -39,9 +39,9 @@ def update_application(id: int, application: JobApplicationUpdate, db: Session =
         raise HTTPException(status_code=404, detail="Application not found")
     return updated
 
-@router.delete("/{id}", response_model=JobApplicationResponse)
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_application(id: int, db: Session = Depends(get_db)):
     deleted = crud.delete_application(db, id)
     if not deleted:
         raise HTTPException(status_code=404, detail="Application not found")
-    return deleted
+    return None
