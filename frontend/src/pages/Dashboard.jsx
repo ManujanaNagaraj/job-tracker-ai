@@ -1,7 +1,9 @@
 import { useStats, useApplications } from '../hooks/useApplications'
+import { useQuery } from '@tanstack/react-query'
+import client from '../api/client'
 import StatsCard from '../components/StatsCard'
 import StatusBadge from '../components/StatusBadge'
-import { Briefcase, TrendingUp, Award, XCircle } from 'lucide-react'
+import { Briefcase, TrendingUp, Award, XCircle, Wifi, WifiOff } from 'lucide-react'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend
@@ -11,6 +13,17 @@ import { Link } from 'react-router-dom'
 function Dashboard() {
   const { data: stats, isLoading: statsLoading, error: statsError } = useStats()
   const { data: applications, isLoading: appsLoading, error: appsError } = useApplications({ limit: 5 })
+  
+  // Health check for connection status
+  const { data: healthData, isError: healthError } = useQuery({
+    queryKey: ['health'],
+    queryFn: async () => {
+      const response = await client.get('/health')
+      return response.data
+    },
+    refetchInterval: 30000, // Check every 30 seconds
+    retry: 1
+  })
 
   // Prepare chart data
   const barData = stats ? [
@@ -80,9 +93,25 @@ function Dashboard() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Dashboard</h1>
-        <p className="text-gray-500 mt-1">{today}</p>
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Dashboard</h1>
+          <p className="text-gray-500 mt-1">{today}</p>
+        </div>
+        {/* Connection Status Indicator */}
+        <div className="flex items-center gap-2 px-3 py-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+          {!healthError ? (
+            <>
+              <Wifi className="w-4 h-4 text-green-500" />
+              <span className="text-sm text-gray-600 dark:text-gray-300">Connected</span>
+            </>
+          ) : (
+            <>
+              <WifiOff className="w-4 h-4 text-red-500" />
+              <span className="text-sm text-gray-600 dark:text-gray-300">Disconnected</span>
+            </>
+          )}
+        </div>
       </div>
 
       {/* KPI Stats Cards */}

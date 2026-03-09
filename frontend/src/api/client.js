@@ -8,6 +8,11 @@ const client = axios.create({
   timeout: 30000, // 30 seconds
 })
 
+// Log API URL in development mode
+if (import.meta.env.DEV) {
+  console.log('🌐 API URL:', import.meta.env.VITE_API_URL || 'http://localhost:8000')
+}
+
 // Request interceptor
 client.interceptors.request.use(
   (config) => {
