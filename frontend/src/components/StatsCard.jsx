@@ -1,3 +1,5 @@
+import { memo } from 'react'
+
 function StatsCard({ title, value, icon: Icon, color, subtitle }) {
   return (
     <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow duration-200">
@@ -15,4 +17,4 @@ function StatsCard({ title, value, icon: Icon, color, subtitle }) {
   )
 }
 
-export default StatsCard
+export default memo(StatsCard)

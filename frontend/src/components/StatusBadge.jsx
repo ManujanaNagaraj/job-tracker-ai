@@ -1,3 +1,5 @@
+import { memo } from 'react'
+
 function StatusBadge({ status }) {
   const statusStyles = {
     Applied: 'bg-blue-100 text-blue-700',
@@ -15,4 +17,4 @@ function StatusBadge({ status }) {
   )
 }
 
-export default StatusBadge
+export default memo(StatusBadge)
